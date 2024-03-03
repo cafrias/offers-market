@@ -11,6 +11,7 @@ CREATE TABLE store (
 	address VARCHAR(255),
 	phone VARCHAR(255),
 	website VARCHAR(255),
+	email VARCHAR(255),
 	location POINT
 );
 
