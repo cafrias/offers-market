@@ -10,13 +10,14 @@ import (
 
 const StoreTable = "store"
 
-func CreateStore(session db.Session, store *models.Store) error {
+func CreateStore(session db.Session, store *models.Store) (uint, error) {
+	var id uint = 0
 	name := store.Name
 	if len(name) == 0 {
-		return errors.New("store name is required")
+		return id, errors.New("store name is required")
 	}
 
-	_, err := session.SQL().InsertInto(StoreTable).Columns(
+	err := session.SQL().InsertInto(StoreTable).Columns(
 		"name",
 		"address",
 		"phone",
@@ -30,7 +31,7 @@ func CreateStore(session db.Session, store *models.Store) error {
 		store.Email,
 		store.Website,
 		fmt.Sprintf("(%v, %v)", store.Location[0], store.Location[1]),
-	).Exec()
+	).Returning("id").Iterator().ScanOne(&id)
 
-	return err
+	return id, err
 }

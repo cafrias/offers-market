@@ -1,17 +1,25 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/cafrias/offers-market/models"
 	"github.com/upper/db/v4"
 )
 
 const BrandTable = "brand"
 
-func CreateBrand(session db.Session, brand *models.Brand) error {
-	_, err := session.SQL().InsertInto(BrandTable).Columns(
+func CreateBrand(session db.Session, brand *models.Brand) (uint, error) {
+	var id uint = 0
+	if brand.Name == "" {
+		return id, errors.New("brand name is required")
+	}
+
+	err := session.SQL().InsertInto(BrandTable).Columns(
 		"name",
 	).Values(
 		brand.Name,
-	).Exec()
-	return err
+	).Returning("id").Iterator().ScanOne(&id)
+
+	return id, err
 }
