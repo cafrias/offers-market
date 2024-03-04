@@ -13,9 +13,18 @@ func main() {
 	}
 	defer session.Close()
 
-	offers, err := db.GetAvailableOffers(session, 1, 15)
+	// offers, err := db.GetAvailableOffers(session, 1, 15)
+	// if err != nil {
+	// 	log.Fatalf("db.GetAvailableOffers(): %q\n", err)
+	// }
+
+	// for _, offer := range offers {
+	// 	log.Printf("Offer: %+v\n", offer)
+	// }
+
+	offers, err := db.SearchAvailableOffers(session, "car", 1, 15)
 	if err != nil {
-		log.Fatalf("db.GetAvailableOffers(): %q\n", err)
+		log.Fatalf("db.SearchAvailableOffers(): %q\n", err)
 	}
 
 	for _, offer := range offers {

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"strings"
 
 	"github.com/cafrias/offers-market/models"
 	"github.com/upper/db/v4"
@@ -81,6 +82,48 @@ func GetAvailableOffers(
 		Where("expiration_date > NOW()").
 		And("available > 0").
 		OrderBy("expiration_date DESC").
+		Paginate(limit).
+		Page(page).
+		All(&offers)
+
+	return offers, err
+}
+
+func SearchAvailableOffers(
+	session db.Session,
+	term string,
+	page uint,
+	limit uint,
+) (offers []models.Offer, err error) {
+	termBd := strings.Builder{}
+	termBd.WriteString("%")
+	termBd.WriteString(term)
+	termBd.WriteString("%")
+
+	term = termBd.String()
+
+	err = session.SQL().
+		Select(
+			"offer.id",
+			"offer.name",
+			"offer.brand_id",
+			"offer.quantity",
+			"offer.available",
+			"offer.price",
+			"offer.picture",
+			"offer.expiration_date",
+			"offer.created_at",
+			"offer.updated_at",
+		).
+		From(OfferTable).
+		LeftJoin("store AS st").
+		On("offer.store_id = st.id").
+		LeftJoin("brand AS br").
+		On("offer.brand_id = br.id").
+		Where("offer.expiration_date > NOW()").
+		Where("offer.available > 0").
+		Where("offer.name ILIKE ? OR st.name ILIKE ? OR br.name ILIKE ?", term, term, term).
+		OrderBy("expiration_date ASC").
 		Paginate(limit).
 		Page(page).
 		All(&offers)
