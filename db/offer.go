@@ -71,3 +71,19 @@ func CreateOffer(session db.Session, offer *models.Offer) (sql.Result, error) {
 		picture,
 	).Returning("id").Exec()
 }
+
+func GetAvailableOffers(
+	session db.Session,
+	page uint,
+	limit uint,
+) (offers []models.Offer, err error) {
+	err = session.SQL().SelectFrom(OfferTable).
+		Where("expiration_date > NOW()").
+		And("available > 0").
+		OrderBy("expiration_date DESC").
+		Paginate(limit).
+		Page(page).
+		All(&offers)
+
+	return offers, err
+}

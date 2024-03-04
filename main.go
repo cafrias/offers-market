@@ -13,6 +13,15 @@ func main() {
 	}
 	defer session.Close()
 
+	offers, err := db.GetAvailableOffers(session, 1, 15)
+	if err != nil {
+		log.Fatalf("db.GetAvailableOffers(): %q\n", err)
+	}
+
+	for _, offer := range offers {
+		log.Printf("Offer: %+v\n", offer)
+	}
+
 	// store := models.Store{
 	// 	Name:    "Store 2",
 	// 	Address: "Address 1",
