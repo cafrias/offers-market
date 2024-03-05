@@ -1,9 +1,15 @@
 package main
 
 import (
+	"html/template"
 	"log"
+	"net/http"
 
 	"github.com/cafrias/offers-market/db"
+	"github.com/cafrias/offers-market/pages"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/render"
 )
 
 func main() {
@@ -12,6 +18,30 @@ func main() {
 		log.Fatalf("db.Open(): %q\n", err)
 	}
 	defer session.Close()
+
+	templates := initTemplates()
+
+	r := chi.NewRouter()
+
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Compress(5, "text/html", "text/css", "application/javascript", "application/json"))
+	r.Use(render.SetContentType(render.ContentTypeHTML))
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		offers, err := db.GetAvailableOffers(session, 1, 15)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+
+		data := pages.IndexData{
+			Offers: offers,
+		}
+
+		templates["home"].Execute(w, data)
+	})
 
 	// offers, err := db.GetAvailableOffers(session, 1, 15)
 	// if err != nil {
@@ -22,14 +52,14 @@ func main() {
 	// 	log.Printf("Offer: %+v\n", offer)
 	// }
 
-	offers, err := db.SearchAvailableOffers(session, "car", 1, 15)
-	if err != nil {
-		log.Fatalf("db.SearchAvailableOffers(): %q\n", err)
-	}
+	// offers, err := db.SearchAvailableOffers(session, "car", 1, 15)
+	// if err != nil {
+	// 	log.Fatalf("db.SearchAvailableOffers(): %q\n", err)
+	// }
 
-	for _, offer := range offers {
-		log.Printf("Offer: %+v\n", offer)
-	}
+	// for _, offer := range offers {
+	// 	log.Printf("Offer: %+v\n", offer)
+	// }
 
 	// store := models.Store{
 	// 	Name:    "Store 2",
@@ -64,4 +94,19 @@ func main() {
 	// if err != nil {
 	// 	log.Fatalf("db.CreateOffer(): %q\n", err)
 	// }
+
+	http.ListenAndServe(":1234", r)
+}
+
+func initTemplates() (templates map[string]*template.Template) {
+	templates = make(map[string]*template.Template)
+
+	home, err := template.ParseFiles("pages/index.html")
+	if err != nil {
+		log.Fatalf("template.ParseFiles(): %q\n", err)
+	}
+
+	templates["home"] = home
+
+	return templates
 }
