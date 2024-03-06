@@ -4,6 +4,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/cafrias/offers-market/db"
 	"github.com/cafrias/offers-market/pages"
@@ -28,6 +31,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5, "text/html", "text/css", "application/javascript", "application/json"))
 	r.Use(render.SetContentType(render.ContentTypeHTML))
+
+	workDir, _ := os.Getwd()
+	filesDir := http.Dir(filepath.Join(workDir, "public"))
+	FileServer(r, "/static", filesDir)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		offers, err := db.GetAvailableOffers(session, 1, 15)
@@ -109,4 +116,23 @@ func initTemplates() (templates map[string]*template.Template) {
 	templates["home"] = home
 
 	return templates
+}
+
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit any URL parameters.")
+	}
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }

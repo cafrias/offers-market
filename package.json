@@ -1,0 +1,15 @@
+{
+  "name": "offers-market",
+  "version": "1.0.0",
+  "description": "Demo project for a marketplace where you can find the best offers in town",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

@@ -6,3 +6,6 @@ services-logs:
 
 services-down:
 	docker compose down
+
+build-styles:
+	npx tailwindcss -i ./styles/styles.css -o ./public/styles.css
