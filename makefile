@@ -9,3 +9,9 @@ services-down:
 
 build-styles:
 	npx tailwindcss -i ./styles/styles.css -o ./public/styles.css
+
+dev:
+	go run main.go
+
+build-templates:
+	templ generate

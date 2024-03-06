@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/cafrias/offers-market/db"
-	"github.com/cafrias/offers-market/pages"
+	"github.com/cafrias/offers-market/ui"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -22,7 +23,7 @@ func main() {
 	}
 	defer session.Close()
 
-	templates := initTemplates()
+	// templates := initTemplates()
 
 	r := chi.NewRouter()
 
@@ -43,11 +44,9 @@ func main() {
 			log.Println(err)
 		}
 
-		data := pages.IndexData{
-			Offers: offers,
-		}
+		page := ui.Home(offers)
 
-		templates["home"].Execute(w, data)
+		page.Render(context.Background(), w)
 	})
 
 	// offers, err := db.GetAvailableOffers(session, 1, 15)
