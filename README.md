@@ -2,6 +2,15 @@
 
 Demo project for a marketplace where you can find the best offers in town
 
+## Dev Environment
+
+You should have installed:
+
+- [ Goose ](https://github.com/pressly/goose): for running migrations
+- [ Air ](https://github.com/cosmtrek/air): for dev reloading
+- [ templ ](https://github.com/a-h/templ): for generating the templates
+- [ node ](https://github.com/nvm-sh/nvm): to install tailwind css
+
 ## Build templates
 
 To generate the template files run:
@@ -20,7 +29,3 @@ Build the styles running:
 ```sh
 make build-styles
 ```
-
-## DB Migrations
-
-Use [Goose](https://github.com/pressly/goose) for DB Migrations.

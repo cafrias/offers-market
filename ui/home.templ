@@ -4,11 +4,13 @@ import "github.com/cafrias/offers-market/models"
 
 templ Home(offers []models.Offer) {
 	@layout() {
-		<h1 class="text-gray-400">Offers</h1>
-		<ul>
-			for _, offer := range offers {
-				<li>{ offer.Name }</li>
-			}
-		</ul>
+		<main class="container mx-auto">
+			<h1 class="text-3xl text-gray-400">Offers</h1>
+			<ul>
+				for _, offer := range offers {
+					<li>{ offer.Name }</li>
+				}
+			</ul>
+		</main>
 	}
 }

@@ -11,7 +11,7 @@ build-styles:
 	npx tailwindcss -i ./styles/styles.css -o ./public/styles.css
 
 dev:
-	go run main.go
+	air
 
 build-templates:
 	templ generate
