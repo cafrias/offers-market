@@ -13,11 +13,34 @@ templ Home(offers []models.Offer, currentPage uint, totalPages uint, q string) {
 					<input type="search" name="q" placeholder="Search for offers" value={ q }/>
 				</label>
 			</form>
-			<ul>
-				for _, offer := range offers {
-					<li>{ offer.Name }</li>
-				}
-			</ul>
+			<table>
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Brand</th>
+						<th>Store</th>
+						<th>Quantity</th>
+						<th>Available</th>
+						<th>Price</th>
+						<th>Expiration</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, offer := range offers {
+						<tr>
+							<td>{ fmt.Sprintf("%d",  offer.Id  ) }</td>
+							<td>{ offer.Name }</td>
+							<td>{ fmt.Sprintf("%d", offer.BrandId) }</td>
+							<td>{ fmt.Sprintf("%d", offer.StoreId) }</td>
+							<td>{ fmt.Sprintf("%d", offer.Quantity) }</td>
+							<td>{ fmt.Sprintf("%d", offer.Available) }</td>
+							<td>{ fmt.Sprintf("%d", offer.Price) }</td>
+							<td>{ offer.ExpirationDate.String() }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
 			<a href={ templ.SafeURL(fmt.Sprintf("?p=%v", currentPage-1)) }>Previous Page</a>
 			<p>Page { fmt.Sprintf("%v", currentPage) } of { fmt.Sprintf("%v", totalPages) }</p>
 			<a href={ templ.SafeURL(fmt.Sprintf("?p=%v", currentPage+1)) }>Next Page</a>
