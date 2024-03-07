@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/cafrias/offers-market/db"
-	"github.com/cafrias/offers-market/ui"
+	"github.com/cafrias/offers-market/resolvers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -37,17 +36,10 @@ func main() {
 	filesDir := http.Dir(filepath.Join(workDir, "public"))
 	FileServer(r, "/static", filesDir)
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		offers, err := db.GetAvailableOffers(session, 1, 15)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
-		}
-
-		page := ui.Home(offers)
-
-		page.Render(context.Background(), w)
-	})
+	home := resolvers.HomeResolver{
+		Db: session,
+	}
+	r.Get("/", home.Resolver)
 
 	// offers, err := db.GetAvailableOffers(session, 1, 15)
 	// if err != nil {

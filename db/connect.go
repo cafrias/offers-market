@@ -13,6 +13,8 @@ var settings = postgresql.ConnectionURL{
 	Password: `example`,
 }
 
-func Connect() (db.Session, error) {
+type Db = db.Session
+
+func Connect() (Db, error) {
 	return postgresql.Open(settings)
 }
