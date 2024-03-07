@@ -1,9 +1,9 @@
 package ui;
 
-import "github.com/cafrias/offers-market/models"
 import "fmt"
+import "github.com/cafrias/offers-market/db"
 
-templ Home(offers []models.Offer, currentPage uint, totalPages uint, q string) {
+templ Home(offers []db.OfferResult, currentPage uint, totalPages uint, q string) {
 	@layout() {
 		<main class="container mx-auto">
 			<h1 class="text-3xl text-gray-400">Offers</h1>
@@ -31,8 +31,8 @@ templ Home(offers []models.Offer, currentPage uint, totalPages uint, q string) {
 						<tr>
 							<td>{ fmt.Sprintf("%d",  offer.Id  ) }</td>
 							<td>{ offer.Name }</td>
-							<td>{ fmt.Sprintf("%d", offer.BrandId) }</td>
-							<td>{ fmt.Sprintf("%d", offer.StoreId) }</td>
+							<td>( { fmt.Sprintf("%d", offer.BrandId) } ) { offer.BrandName }</td>
+							<td>( { fmt.Sprintf("%d", offer.StoreId) } ) { offer.StoreName }</td>
 							<td>{ fmt.Sprintf("%d", offer.Quantity) }</td>
 							<td>{ fmt.Sprintf("%d", offer.Available) }</td>
 							<td>{ fmt.Sprintf("%d", offer.Price) }</td>

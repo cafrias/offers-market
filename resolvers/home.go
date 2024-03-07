@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/cafrias/offers-market/db"
-	"github.com/cafrias/offers-market/models"
 	"github.com/cafrias/offers-market/ui"
 )
 
@@ -25,7 +24,7 @@ func (h HomeResolver) Resolver(w http.ResponseWriter, r *http.Request) {
 		pNum = 1
 	}
 
-	var offers []models.Offer
+	var offers []db.OfferResult
 	var totalPages uint
 	qStr := qs.Get("q")
 

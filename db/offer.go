@@ -9,6 +9,12 @@ import (
 	"github.com/upper/db/v4"
 )
 
+type OfferResult struct {
+	models.Offer
+	StoreName string `db:"store_name"`
+	BrandName string `db:"brand_name"`
+}
+
 const OfferTable = "offer"
 
 func CreateOffer(session db.Session, offer *models.Offer) (sql.Result, error) {
@@ -77,19 +83,30 @@ func GetAvailableOffers(
 	session db.Session,
 	page uint,
 	limit uint,
-) (offers []models.Offer, totalPages uint, err error) {
-	qr := session.SQL().SelectFrom(OfferTable).
+) (offers []OfferResult, totalPages uint, err error) {
+	// TODO: can we count from a query that doesn't have a left join?
+	qr := session.SQL().Select(
+		"offer.*",
+		"st.name AS store_name",
+		"br.name AS brand_name",
+	).
+		From(OfferTable).
+		LeftJoin("store AS st").
+		On("offer.store_id = st.id").
+		LeftJoin("brand AS br").
+		On("offer.brand_id = br.id").
 		Where("expiration_date > NOW()").
 		And("available > 0").
 		OrderBy("expiration_date DESC").
-		Paginate(limit)
+		Paginate(limit).
+		Page(page)
 
 	totalPages, err = qr.TotalPages()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = qr.Page(page).All(&offers)
+	err = qr.All(&offers)
 
 	return offers, totalPages, err
 }
@@ -99,7 +116,7 @@ func SearchAvailableOffers(
 	term string,
 	page uint,
 	limit uint,
-) (offers []models.Offer, err error) {
+) (offers []OfferResult, err error) {
 	termBd := strings.Builder{}
 	termBd.WriteString("%")
 	termBd.WriteString(term)
@@ -109,16 +126,9 @@ func SearchAvailableOffers(
 
 	err = session.SQL().
 		Select(
-			"offer.id",
-			"offer.name",
-			"offer.brand_id",
-			"offer.quantity",
-			"offer.available",
-			"offer.price",
-			"offer.picture",
-			"offer.expiration_date",
-			"offer.created_at",
-			"offer.updated_at",
+			"offer.*",
+			"st.name AS store_name",
+			"br.name as brand_name",
 		).
 		From(OfferTable).
 		LeftJoin("store AS st").
