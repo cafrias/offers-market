@@ -1,8 +1,9 @@
 package ui;
 
 import "github.com/cafrias/offers-market/models"
+import "fmt"
 
-templ Home(offers []models.Offer) {
+templ Home(offers []models.Offer, currentPage uint, totalPages uint) {
 	@layout() {
 		<main class="container mx-auto">
 			<h1 class="text-3xl text-gray-400">Offers</h1>
@@ -11,6 +12,9 @@ templ Home(offers []models.Offer) {
 					<li>{ offer.Name }</li>
 				}
 			</ul>
+			<a href={ templ.SafeURL(fmt.Sprintf("?p=%v", currentPage-1)) }>Previous Page</a>
+			<p>Page { fmt.Sprintf("%v", currentPage) } of { fmt.Sprintf("%v", totalPages) }</p>
+			<a href={ templ.SafeURL(fmt.Sprintf("?p=%v", currentPage+1)) }>Next Page</a>
 		</main>
 	}
 }

@@ -77,16 +77,21 @@ func GetAvailableOffers(
 	session db.Session,
 	page uint,
 	limit uint,
-) (offers []models.Offer, err error) {
-	err = session.SQL().SelectFrom(OfferTable).
+) (offers []models.Offer, totalPages uint, err error) {
+	qr := session.SQL().SelectFrom(OfferTable).
 		Where("expiration_date > NOW()").
 		And("available > 0").
 		OrderBy("expiration_date DESC").
-		Paginate(limit).
-		Page(page).
-		All(&offers)
+		Paginate(limit)
 
-	return offers, err
+	totalPages, err = qr.TotalPages()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = qr.Page(page).All(&offers)
+
+	return offers, totalPages, err
 }
 
 func SearchAvailableOffers(
