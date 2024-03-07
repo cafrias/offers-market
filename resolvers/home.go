@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/cafrias/offers-market/db"
+	"github.com/cafrias/offers-market/models"
 	"github.com/cafrias/offers-market/ui"
 )
 
@@ -17,19 +18,29 @@ type HomeResolver struct {
 }
 
 func (h HomeResolver) Resolver(w http.ResponseWriter, r *http.Request) {
-	pStr := r.URL.Query().Get("p")
+	qs := r.URL.Query()
+	pStr := qs.Get("p")
 	pNum, err := strconv.Atoi(pStr)
 	if err != nil {
 		pNum = 1
 	}
 
-	offers, totalPages, err := db.GetAvailableOffers(h.Db, uint(pNum), resultsPerPage)
+	var offers []models.Offer
+	var totalPages uint
+	qStr := qs.Get("q")
+
+	if len(qStr) > 0 {
+		offers, err = db.SearchAvailableOffers(h.Db, qStr, uint(pNum), resultsPerPage)
+	} else {
+		offers, totalPages, err = db.GetAvailableOffers(h.Db, uint(pNum), resultsPerPage)
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 	}
 
-	page := ui.Home(offers, uint(pNum), totalPages)
+	page := ui.Home(offers, uint(pNum), totalPages, qStr)
 
 	page.Render(context.Background(), w)
 }

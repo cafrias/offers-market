@@ -3,10 +3,16 @@ package ui;
 import "github.com/cafrias/offers-market/models"
 import "fmt"
 
-templ Home(offers []models.Offer, currentPage uint, totalPages uint) {
+templ Home(offers []models.Offer, currentPage uint, totalPages uint, q string) {
 	@layout() {
 		<main class="container mx-auto">
 			<h1 class="text-3xl text-gray-400">Offers</h1>
+			<form action="/" method="get">
+				<label>
+					<span class="block">Search</span>
+					<input type="search" name="q" placeholder="Search for offers" value={ q }/>
+				</label>
+			</form>
 			<ul>
 				for _, offer := range offers {
 					<li>{ offer.Name }</li>
