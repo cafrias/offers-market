@@ -13,8 +13,5 @@ build-styles:
 dev:
 	air
 
-build-proto:
-	protoc -I=api --go_out=api --go_opt=paths=source_relative api/api.proto
-
 build-templates:
 	templ generate
