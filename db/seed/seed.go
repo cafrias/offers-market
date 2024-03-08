@@ -74,12 +74,13 @@ func createBrand() models.Brand {
 
 func createStore() models.Store {
 	return models.Store{
-		Name:     gofakeit.Company(),
-		Address:  gofakeit.Address().Address,
-		Phone:    gofakeit.Phone(),
-		Email:    gofakeit.Email(),
-		Website:  gofakeit.URL(),
-		Location: [2]float64{gofakeit.Latitude(), gofakeit.Longitude()},
+		Name:    gofakeit.Company(),
+		Address: gofakeit.Address().Address,
+		Phone:   gofakeit.Phone(),
+		Email:   gofakeit.Email(),
+		Website: gofakeit.URL(),
+		Lat:     gofakeit.Latitude(),
+		Lng:     gofakeit.Longitude(),
 	}
 }
 

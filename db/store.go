@@ -30,8 +30,22 @@ func CreateStore(session db.Session, store *models.Store) (uint, error) {
 		store.Phone,
 		store.Email,
 		store.Website,
-		fmt.Sprintf("(%v, %v)", store.Location[0], store.Location[1]),
+		fmt.Sprintf("(%v, %v)", store.Lng, store.Lat),
 	).Returning("id").Iterator().ScanOne(&id)
 
 	return id, err
+}
+
+func GetStore(session db.Session, id uint) (*models.Store, error) {
+	store := &models.Store{}
+	err := session.SQL().
+		Select(
+			"*",
+			db.Raw("(location[0]) as lng"),
+			db.Raw("(location[1]) as lat"),
+		).
+		From(StoreTable).
+		Where("id", id).
+		One(store)
+	return store, err
 }
