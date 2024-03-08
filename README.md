@@ -10,6 +10,7 @@ You should have installed:
 - [ Air ](https://github.com/cosmtrek/air): for dev reloading
 - [ templ ](https://github.com/a-h/templ): for generating the templates
 - [ node ](https://github.com/nvm-sh/nvm): to install tailwind css
+- [ protoc ](https://grpc.io/docs/protoc-installation): to build protobuffer files
 
 ## Build templates
 
@@ -17,6 +18,14 @@ To generate the template files run:
 
 ```sh
 make build-templates
+```
+
+## Build Protobuffer files
+
+Run:
+
+```sh
+make build-proto
 ```
 
 ## Build styles

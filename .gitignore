@@ -2,3 +2,4 @@ node_modules
 *_templ.go
 public/styles.css
 tmp
+*.pb.go

@@ -24,4 +24,5 @@ require (
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 )
