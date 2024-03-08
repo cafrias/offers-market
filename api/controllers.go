@@ -25,7 +25,6 @@ func (o *OffersResponse) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (c *Controllers) ListOffers(w http.ResponseWriter, r *http.Request) {
-	// ...
 	qs := r.URL.Query()
 	pStr := qs.Get("p")
 	pNum, err := strconv.Atoi(pStr)

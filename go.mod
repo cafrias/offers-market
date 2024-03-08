@@ -3,7 +3,6 @@ module github.com/cafrias/offers-market
 go 1.22.0
 
 require (
-	github.com/a-h/templ v0.2.598
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/render v1.0.3
 	github.com/upper/db/v4 v4.7.0
