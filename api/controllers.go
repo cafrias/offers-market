@@ -18,8 +18,8 @@ type Controllers struct {
 }
 
 type OffersResponse struct {
-	Offers []db.OfferResult `json:"offers"`
-	Pages  int32            `json:"pages"`
+	Items []db.OfferResult `json:"items"`
+	Total int32            `json:"total"`
 }
 
 func (o *OffersResponse) Render(w http.ResponseWriter, r *http.Request) error {
@@ -50,8 +50,8 @@ func (c *Controllers) ListOffers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := OffersResponse{
-		Offers: offers,
-		Pages:  int32(totalPages),
+		Items: offers,
+		Total: int32(totalPages),
 	}
 
 	render.Render(w, r, &res)
