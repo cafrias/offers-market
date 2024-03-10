@@ -39,7 +39,7 @@ func (c *Controllers) ListOffers(w http.ResponseWriter, r *http.Request) {
 	qStr := qs.Get("q")
 
 	if len(qStr) > 0 {
-		offers, err = db.SearchAvailableOffers(c.Db, qStr, uint(pNum), resultsPerPage)
+		offers, totalPages, err = db.SearchAvailableOffers(c.Db, qStr, uint(pNum), resultsPerPage)
 	} else {
 		offers, totalPages, err = db.GetAvailableOffers(c.Db, uint(pNum), resultsPerPage)
 	}

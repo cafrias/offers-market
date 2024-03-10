@@ -116,7 +116,7 @@ func SearchAvailableOffers(
 	term string,
 	page uint,
 	limit uint,
-) (offers []OfferResult, err error) {
+) (offers []OfferResult, totalPages uint, err error) {
 	termBd := strings.Builder{}
 	termBd.WriteString("%")
 	termBd.WriteString(term)
@@ -124,7 +124,7 @@ func SearchAvailableOffers(
 
 	term = termBd.String()
 
-	err = session.SQL().
+	qr := session.SQL().
 		Select(
 			"offer.*",
 			"st.name AS store_name",
@@ -140,8 +140,14 @@ func SearchAvailableOffers(
 		Where("offer.name ILIKE ? OR st.name ILIKE ? OR br.name ILIKE ?", term, term, term).
 		OrderBy("expiration_date ASC").
 		Paginate(limit).
-		Page(page).
-		All(&offers)
+		Page(page)
 
-	return offers, err
+	totalPages, err = qr.TotalPages()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = qr.All(&offers)
+
+	return offers, totalPages, err
 }
