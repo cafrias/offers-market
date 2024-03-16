@@ -12,6 +12,7 @@ import (
 const NumberOfBrands = 100
 const NumberOfStores = 100
 const NumberOfOffers = 1000
+const NumberOfProducts = 100
 
 func main() {
 	gofakeit.Seed(0)
@@ -26,7 +27,6 @@ func main() {
 		brand := createBrand()
 		brands = append(brands, brand)
 	}
-
 	brandIds := make([]uint, 0, NumberOfBrands)
 	for _, brand := range brands {
 		rId, err := db.CreateBrand(session, &brand)
@@ -42,7 +42,6 @@ func main() {
 		store := createStore()
 		stores = append(stores, store)
 	}
-
 	storeIds := make([]uint, 0, NumberOfStores)
 	for _, store := range stores {
 		rId, err := db.CreateStore(session, &store)
@@ -52,9 +51,24 @@ func main() {
 		storeIds = append(storeIds, rId)
 	}
 
+	products := [NumberOfProducts]models.Product{}
+	for i := range products {
+		product := createProduct(brandIds)
+		products[i] = product
+	}
+	productIds := [NumberOfProducts]uint{}
+	for i, product := range products {
+		rId, err := db.CreateProduct(session, &product)
+		if err != nil {
+			panic(err)
+		}
+
+		productIds[i] = rId
+	}
+
 	offers := make([]models.Offer, 0, NumberOfOffers)
 	for range NumberOfOffers {
-		offer := createOffer(brandIds, storeIds)
+		offer := createOffer(productIds, storeIds)
 		offers = append(offers, offer)
 	}
 
@@ -84,16 +98,24 @@ func createStore() models.Store {
 	}
 }
 
-func createOffer(brandIds []uint, storeIds []uint) models.Offer {
-	picSeed := gofakeit.UUID()
+func createOffer(productIds [NumberOfProducts]uint, storeIds []uint) models.Offer {
 	return models.Offer{
-		BrandId:        brandIds[gofakeit.Number(0, len(brandIds)-1)],
 		StoreId:        uint(storeIds[gofakeit.Number(0, len(storeIds)-1)]),
 		Price:          uint(gofakeit.Number(10_000, 10_000_000)),
 		Quantity:       uint(gofakeit.Number(1, 12)),
 		Available:      uint(gofakeit.Number(1, 200)),
-		Name:           gofakeit.ProductName(),
-		Picture:        fmt.Sprintf("https://picsum.photos/seed/%v/200/300", picSeed),
+		ProductId:      uint(productIds[gofakeit.Number(0, len(productIds)-1)]),
+		Description:    gofakeit.Sentence(10),
 		ExpirationDate: time.Now().Add(time.Duration(gofakeit.Number(1, 30)) * 24 * time.Hour),
+	}
+}
+
+func createProduct(brandIds []uint) models.Product {
+	picSeed := gofakeit.UUID()
+	return models.Product{
+		Name:        gofakeit.ProductName(),
+		BrandId:     brandIds[gofakeit.Number(0, len(brandIds)-1)],
+		Picture:     fmt.Sprintf("https://picsum.photos/seed/%v/200/300", picSeed),
+		Description: gofakeit.Sentence(10),
 	}
 }
