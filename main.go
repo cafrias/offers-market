@@ -40,5 +40,8 @@ func main() {
 
 	log.Printf("Server listening on %v:%v\n", utils.GetLocalIP(), port)
 
-	http.ListenAndServe(fmt.Sprintf("0.0.0.0:%v", port), r)
+	err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%v", port), r)
+	if err != nil {
+		log.Fatalf("http.ListenAndServe(): %q\n", err)
+	}
 }

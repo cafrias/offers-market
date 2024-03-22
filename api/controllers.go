@@ -54,7 +54,11 @@ func (c *Controllers) ListOffers(w http.ResponseWriter, r *http.Request) {
 		Total: int32(totalPages),
 	}
 
-	render.Render(w, r, &res)
+	err = render.Render(w, r, &res)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+	}
 }
 
 type GetStoreResponse struct {
@@ -89,5 +93,9 @@ func (c *Controllers) GetStore(w http.ResponseWriter, r *http.Request) {
 		Store: *store,
 	}
 
-	render.Render(w, r, &res)
+	err = render.Render(w, r, &res)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+	}
 }

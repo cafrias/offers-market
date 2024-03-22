@@ -15,7 +15,10 @@ const NumberOfOffers = 1000
 const NumberOfProducts = 100
 
 func main() {
-	gofakeit.Seed(0)
+	err := gofakeit.Seed(0)
+	if err != nil {
+		panic(err)
+	}
 
 	session, err := db.Connect()
 	if err != nil {

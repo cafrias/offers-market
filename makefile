@@ -3,3 +3,7 @@ services:
 
 dev:
 	air
+
+lint:
+	golangci-lint run
+
